@@ -1,17 +1,13 @@
-
-
 service: csv-upload
-
 
 provider:
   name: aws
   runtime: nodejs10.x
 
-custom: 
- bucket: faethm-jobmatching-csv-uploads
+custom:
+  bucket: faethm-jobmatching-csv-uploads
 
-
- iamRoleStatements:
+  iamRoleStatements:
     - Effect: Allow
       Action:
         - dynamodb:DescribeTable
@@ -28,7 +24,7 @@ custom:
             - Ref: JobsDynamoDbTable
     - Effect: Allow
       Action:
-      - s3: *
+        - s3: "*"
       Resource: "*"
 
 # you can define service wide environment variables here
@@ -45,22 +41,13 @@ custom:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
+  addData:
     handler: handler.addData
-#    The following are a few example events you can configure
-#    NOTE: Please make sure to change your handler code to work with those events
-#    Check the event documentation for details
-#    events:
-#      - http:
-#          path: users/create
-#          method: get
-#      - websocket: $connect
-     - s3: 
-        bucket: ${self:custom.bucket}
-        event: s3.ObjectCreated:*
-        rules:
-          -suffix: .csv
-
+    events:
+      - s3:
+          bucket: ${self:custom.bucket}
+          event: s3.ObjectCreated:*
+          rules: [{ suffix: ".csv" }]
 #      - schedule: rate(10 minutes)
 #      - sns: greeter-topic
 #      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
