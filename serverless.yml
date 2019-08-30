@@ -4,9 +4,6 @@ provider:
   name: aws
   runtime: nodejs10.x
 
-custom:
-  bucket: faethm-jobmatching-csv-uploads
-
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -22,10 +19,6 @@ custom:
           - ""
           - - "arn:aws:dynamodb:*:*:table/"
             - Ref: JobsDynamoDbTable
-    - Effect: Allow
-      Action:
-        - s3: "*"
-      Resource: "*"
 
 functions:
   addData:
@@ -51,3 +44,16 @@ resources:
         SourceAccount:
           Ref: AWS::AccountId
         SourceArn: "arn:aws:s3:::faethm-jobmatching-csv-uploads"
+    JobsDynamoDbTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: roles
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
